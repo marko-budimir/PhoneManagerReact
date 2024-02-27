@@ -1,8 +1,32 @@
 import InputFormRow from "./InputFormRow";
 import Button from "./Button";
+import { useState } from "react";
 
 function InputForm({ isUpdating = false }) {
   const handleSubmit = isUpdating ? updateMobilePhone : addMobilePhone;
+  const [phone, setPhone] = useState({ brand: '', model: '', operatingSystem: '', storageCapacity: '', ramCapacity: '', color: '' });
+  function handleChange(event) {
+    setPhone({ ...phone, [event.target.name]: event.target.value });
+  }
+
+  function addMobilePhone() {
+  
+    const mobilePhones = getMobilePhones();
+    const id = generateId();
+    if (id !== '' && !isIdTaken(id)) {
+      const mobilePhone = {
+        id: id,
+        brand: phone.brand,
+        model: phone.model,
+        operatingSystem: phone.operatingSystem,
+        storageCapacity: phone.storageCapacity,
+        ramCapacity: phone.ramCapacity,
+        color: phone.color
+      };
+      mobilePhones.push(mobilePhone);
+      window.localStorage.setItem('mobilePhones', JSON.stringify(mobilePhones));
+    }
+  }
 
   return (
     <div className="container">
@@ -11,22 +35,22 @@ function InputForm({ isUpdating = false }) {
         <table>
           <tbody>
             <tr>
-              <InputFormRow label="Brand:" name="brand" type="text" />
+              <InputFormRow label="Brand:" name="brand" type="text" value={phone.brand} handleChange={handleChange} />
             </tr>
             <tr>
-              <InputFormRow label="Model:" name="model" type="text" />
+              <InputFormRow label="Model:" name="model" type="text" value={phone.model} handleChange={handleChange}/>
             </tr>
             <tr>
-              <InputFormRow label="Operating System:" name="operatingSystem" type="text" />
+              <InputFormRow label="Operating System:" name="operatingSystem" type="text" value={phone.operatingSystem} handleChange={handleChange}/>
             </tr>
             <tr>
-              <InputFormRow label="Storage Capacity (GB):" name="storageCapacity" type="number" />
+              <InputFormRow label="Storage Capacity (GB):" name="storageCapacity" type="number" value={phone.storageCapacity} handleChange={handleChange}/>
             </tr>
             <tr>
-              <InputFormRow label="RAM Capacity (GB):" name="ramCapacity" type="number" />
+              <InputFormRow label="RAM Capacity (GB):" name="ramCapacity" type="number" value={phone.ramCapacity} handleChange={handleChange}/>
             </tr>
             <tr>
-              <InputFormRow label="Color:" name="color" type="text" />
+              <InputFormRow label="Color:" name="color" type="text" value={phone.color} handleChange={handleChange}/>
             </tr>
             <tr>
               <td />
@@ -67,32 +91,6 @@ function updateMobilePhone() {
 
 export default InputForm;
 
-function addMobilePhone() {
-  const form = document.getElementById('addMobilePhoneForm');
-  const id = generateId();
-  const brand = form.brand.value;
-  const model = form.model.value;
-  const operatingSystem = form.operatingSystem.value;
-  const storageCapacity = form.storageCapacity.value;
-  const ramCapacity = form.ramCapacity.value;
-  const color = form.color.value;
-
-  const mobilePhones = getMobilePhones();
-  if (id != '' && !isIdTaken(id)) {
-    const mobilePhone = {
-      id,
-      brand,
-      model,
-      operatingSystem,
-      storageCapacity,
-      ramCapacity,
-      color
-    };
-    mobilePhones.push(mobilePhone);
-    
-    window.localStorage.setItem('mobilePhones', JSON.stringify(mobilePhones));
-  }
-}
 
 function generateId() {
   const mobilePhones = getMobilePhones();
