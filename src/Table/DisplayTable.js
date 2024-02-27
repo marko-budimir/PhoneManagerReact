@@ -1,75 +1,83 @@
 import Phone from './Phone';
-import { useState, useEffect } from 'react';
+import React from 'react';
 import InputForm from '../Form/InputForm';
 
-function DisplayTable() {
-    const [selectedPhone, setSelectedPhone] = useState(null);
-    const [mobilePhones, setMobilePhones] = useState([]);
+class DisplayTable extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            selectedPhone: null,
+            mobilePhones: []
+        };
+    }
 
-    useEffect(() => {
+    componentDidMount() {
         const storedPhones = localStorage.getItem('mobilePhones');
-        setMobilePhones(storedPhones ? JSON.parse(storedPhones) : []);
-    }, [selectedPhone]);
-
-
-    function handleUpdate(phone) {
-        setSelectedPhone(phone);
-    }
-    function handleDelete(id) {
-        deletePhone(id);
-        setSelectedPhone(null);
+        this.setState({ mobilePhones: storedPhones ? JSON.parse(storedPhones) : [] });
     }
 
-    function deletePhone(id) {
+
+    handleUpdate(phone) {
+        this.setState({ selectedPhone: phone });
+    }
+
+    handleDelete(id) {
+        this.deletePhone(id);
+        this.setState({ mobilePhones: null });
+    }
+
+    deletePhone(id) {
+        const { mobilePhones } = this.state;
         const updatedMobilePhones = mobilePhones.filter(phone => phone.id !== id);
         localStorage.setItem('mobilePhones', JSON.stringify(updatedMobilePhones));
-        setMobilePhones(updatedMobilePhones);
+        this.setState({ mobilePhones: updatedMobilePhones });
     }
 
-    function handleAddOrUpdate(updatedMobilePhones) {
-        setMobilePhones(updatedMobilePhones);
-        setSelectedPhone(null);
+    handleAddOrUpdate(updatedMobilePhones) {
+        this.setState({ mobilePhones: updatedMobilePhones, selectedPhone: null });
     }
-
-    return (
-        <div>
-            <InputForm onAddOrUpdate={handleAddOrUpdate} />
-            {selectedPhone && (<InputForm selectedPhone={selectedPhone} isUpdating="true" onAddOrUpdate={handleAddOrUpdate} />)}
-            <h2 className="phoneTableTitle">Phones</h2>
-            <table id="mobilePhoneTable">
-                <tbody>
-                    <tr>
-                        <th>Brand</th>
-                        <th>Model</th>
-                        <th>Operating System</th>
-                        <th>Storage Capacity (GB)</th>
-                        <th>RAM (GB)</th>
-                        <th>Color</th>
-                    </tr>
-                    {mobilePhones
-                        .sort((a, b) => {
-                            if (a.brand === b.brand) {
-                                return a.model.localeCompare(b.model);
-                            }
-                            return a.brand.localeCompare(b.brand);
-                        })
-                        .map((phone) => (
-                            <Phone
-                                key={phone.id}
-                                brand={phone.brand}
-                                model={phone.model}
-                                operatingSystem={phone.operatingSystem}
-                                storageCapacity={phone.storageCapacity}
-                                ramCapacity={phone.ramCapacity}
-                                color={phone.color}
-                                handleUpdate={() => handleUpdate(phone)}
-                                handleDelete={() => handleDelete(phone.id)}
-                            />
-                        ))}
-                </tbody>
-            </table>
-        </div>
-    )
+    render() {
+        const { selectedPhone, mobilePhones } = this.state;
+        return (
+            <div>
+                <InputForm onAddOrUpdate={this.handleAddOrUpdate} />
+                {selectedPhone && (<InputForm selectedPhone={selectedPhone} isUpdating="true" onAddOrUpdate={this.handleAddOrUpdate} />)}
+                <h2 className="phoneTableTitle">Phones</h2>
+                <table id="mobilePhoneTable">
+                    <tbody>
+                        <tr>
+                            <th>Brand</th>
+                            <th>Model</th>
+                            <th>Operating System</th>
+                            <th>Storage Capacity (GB)</th>
+                            <th>RAM (GB)</th>
+                            <th>Color</th>
+                        </tr>
+                        {mobilePhones
+                            .sort((a, b) => {
+                                if (a.brand === b.brand) {
+                                    return a.model.localeCompare(b.model);
+                                }
+                                return a.brand.localeCompare(b.brand);
+                            })
+                            .map((phone) => (
+                                <Phone
+                                    key={phone.id}
+                                    brand={phone.brand}
+                                    model={phone.model}
+                                    operatingSystem={phone.operatingSystem}
+                                    storageCapacity={phone.storageCapacity}
+                                    ramCapacity={phone.ramCapacity}
+                                    color={phone.color}
+                                    handleUpdate={() => this.handleUpdate(phone)}
+                                    handleDelete={() => this.handleDelete(phone.id)}
+                                />
+                            ))}
+                    </tbody>
+                </table>
+            </div>
+        )
+    }
 }
 
 export default DisplayTable;

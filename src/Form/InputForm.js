@@ -5,11 +5,12 @@ import { useState, useEffect } from "react";
 function InputForm({ selectedPhone, onAddOrUpdate }) {
   const handleSubmit = selectedPhone ? updateMobilePhone : addMobilePhone;
   const [phone, setPhone] = useState({ brand: '', model: '', operatingSystem: '', storageCapacity: '', ramCapacity: '', color: '' });
+
   function handleChange(event) {
     setPhone({ ...phone, [event.target.name]: event.target.value });
   }
 
-  
+
   useEffect(() => {
     if (selectedPhone) {
       setPhone({ brand: selectedPhone.brand, model: selectedPhone.model, operatingSystem: selectedPhone.operatingSystem, storageCapacity: selectedPhone.storageCapacity, ramCapacity: selectedPhone.ramCapacity, color: selectedPhone.color });
@@ -21,18 +22,20 @@ function InputForm({ selectedPhone, onAddOrUpdate }) {
   function addMobilePhone() {
     const id = generateId();
     if (id !== '' && !isIdTaken(id)) {
-      const mobilePhone = {
-        id: id,
-        brand: phone.brand,
-        model: phone.model,
-        operatingSystem: phone.operatingSystem,
-        storageCapacity: phone.storageCapacity,
-        ramCapacity: phone.ramCapacity,
-        color: phone.color
-      };
-      const updatedMobilePhones = [...mobilePhones, mobilePhone];
-      window.localStorage.setItem('mobilePhones', JSON.stringify(mobilePhones));
-      onAddOrUpdate(updatedMobilePhones);
+      if (validateForm()) {
+        const mobilePhone = {
+          id: id,
+          brand: phone.brand,
+          model: phone.model,
+          operatingSystem: phone.operatingSystem,
+          storageCapacity: phone.storageCapacity,
+          ramCapacity: phone.ramCapacity,
+          color: phone.color,
+        };
+        const updatedMobilePhones = [...mobilePhones, mobilePhone];
+        window.localStorage.setItem('mobilePhones', JSON.stringify(updatedMobilePhones));
+        onAddOrUpdate(updatedMobilePhones);
+      }
     }
   }
 
@@ -51,7 +54,35 @@ function InputForm({ selectedPhone, onAddOrUpdate }) {
     onAddOrUpdate(mobilePhones);
   }
 
+  function validateForm() {
+    let isValid = true;
+    if (!phone.brand.trim()) {
+      alert('Brand is required');
+      isValid = false;
+    } 
+    else if (!phone.model.trim()) {
+      alert('Model is required');
+      isValid = false;
+    }
+    else if (!phone.operatingSystem.trim()) {
+      alert('Operating system is required');
+      isValid = false;
+    }
+    else if (parseInt(phone.storageCapacity, 10) <= 0 || isNaN(parseInt(phone.storageCapacity, 10))) {
+      alert('Storage capacity must be greater than 0');
+      isValid = false;
+    }
+    else if (parseInt(phone.ramCapacity, 10) <= 0 || isNaN(parseInt(phone.ramCapacity, 10))) {
+      alert('RAM capacity must be greater than 0');
+      isValid = false;
+    }
+    else if (!phone.color.trim()) {
+      alert('Color is required');
+      isValid = false;
+    }
 
+    return isValid;
+  }
 
   return (
     <div className="container">
