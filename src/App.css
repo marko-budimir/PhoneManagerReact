@@ -36,3 +36,75 @@
     transform: rotate(360deg);
   }
 }
+
+body {
+  background-color: #f0f0f0;
+}
+
+.container {
+  width: 80%;
+  margin: auto;
+  padding: 20px;
+  text-align: start;
+}
+
+
+h1, h2, h3, h4, h5, h6 {
+  color: #333;
+}
+
+p {
+  line-height: 1.6;
+}
+
+a {
+  color: #333;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #555;
+}
+
+h1 {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+h3 {
+  margin-bottom: 10px;
+}
+
+.phoneTableTitle {
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+#mobilePhoneTable {
+  width: 70%;
+  margin: auto;
+  border-collapse: collapse;
+}
+
+#mobilePhoneTable th {
+  border-bottom: 1px solid #333;
+}
+
+#mobilePhoneTable th,
+#mobilePhoneTable td {
+  border-left: 1px solid #333;
+  padding: 8px;
+  text-align: center;
+}
+
+#mobilePhoneTable td.tableButtons {
+  border: none;
+}
+
+#mobilePhoneTable th:first-child,
+#mobilePhoneTable td:first-child {
+  border-left: none;
+}
+
+
+
