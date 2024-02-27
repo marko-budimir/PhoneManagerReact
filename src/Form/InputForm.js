@@ -2,7 +2,7 @@ import InputFormRow from "./InputFormRow";
 import Button from "./Button";
 import { useState, useEffect } from "react";
 
-function InputForm({ selectedPhone }) {
+function InputForm({ selectedPhone, onAddOrUpdate }) {
   const handleSubmit = selectedPhone ? updateMobilePhone : addMobilePhone;
   const [phone, setPhone] = useState({ brand: '', model: '', operatingSystem: '', storageCapacity: '', ramCapacity: '', color: '' });
   function handleChange(event) {
@@ -17,6 +17,7 @@ function InputForm({ selectedPhone }) {
   }, [selectedPhone]);
 
   const mobilePhones = getMobilePhones();
+
   function addMobilePhone() {
     const id = generateId();
     if (id !== '' && !isIdTaken(id)) {
@@ -29,8 +30,9 @@ function InputForm({ selectedPhone }) {
         ramCapacity: phone.ramCapacity,
         color: phone.color
       };
-      mobilePhones.push(mobilePhone);
+      const updatedMobilePhones = [...mobilePhones, mobilePhone];
       window.localStorage.setItem('mobilePhones', JSON.stringify(mobilePhones));
+      onAddOrUpdate(updatedMobilePhones);
     }
   }
 
@@ -46,6 +48,7 @@ function InputForm({ selectedPhone }) {
       color: phone.color
     };
     window.localStorage.setItem('mobilePhones', JSON.stringify(mobilePhones));
+    onAddOrUpdate(mobilePhones);
   }
 
 
@@ -77,7 +80,7 @@ function InputForm({ selectedPhone }) {
             <tr>
               <td />
               <td>
-                <Button type="submit" value={selectedPhone ? "Update phone" : "Add phone"} onClick={handleSubmit} />
+                <Button type="button" value={selectedPhone ? "Update phone" : "Add phone"} onClick={handleSubmit} />
               </td>
             </tr>
           </tbody>

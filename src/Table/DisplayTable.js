@@ -26,9 +26,15 @@ function DisplayTable() {
         setMobilePhones(updatedMobilePhones);
     }
 
+    function handleAddOrUpdate(updatedMobilePhones) {
+        setMobilePhones(updatedMobilePhones);
+        setSelectedPhone(null);
+    }
+
     return (
         <div>
-            {selectedPhone && (<InputForm selectedPhone={selectedPhone} isUpdating="true" />)}
+            <InputForm onAddOrUpdate={handleAddOrUpdate} />
+            {selectedPhone && (<InputForm selectedPhone={selectedPhone} isUpdating="true" onAddOrUpdate={handleAddOrUpdate} />)}
             <h2 className="phoneTableTitle">Phones</h2>
             <table id="mobilePhoneTable">
                 <tbody>

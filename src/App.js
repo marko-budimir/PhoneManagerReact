@@ -7,7 +7,6 @@ function App() {
   return (
     <div className="App">
       <h1>Mobile Phone Manager</h1>
-      <InputForm />
       <DisplayTable />
     </div>
   );
