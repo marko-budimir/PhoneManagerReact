@@ -8,7 +8,6 @@ function App() {
     <div className="App">
       <h1>Mobile Phone Manager</h1>
       <InputForm />
-      <InputForm isUpdating="true" />
       <DisplayTable />
     </div>
   );

@@ -1,17 +1,34 @@
 import Phone from './Phone';
+import { useState, useEffect } from 'react';
+import InputForm from '../Form/InputForm';
 
 function DisplayTable() {
-    let mobilePhones = localStorage.getItem('mobilePhones');
-    mobilePhones = mobilePhones ? JSON.parse(mobilePhones) : [];
-    if (mobilePhones.length === 0) {
-        mobilePhones = [
-            { id: 0, brand: "Apple", model: "iPhone 12", operatingSystem: "iOS", storageCapacity: 64, ramCapacity: 4, color: "Black" },
-            { id: 1, brand: "Samsung", model: "Galaxy S21", operatingSystem: "Android", storageCapacity: 128, ramCapacity: 8, color: "White" },
-            { id: 2, brand: "Google", model: "Pixel 5", operatingSystem: "Android", storageCapacity: 128, ramCapacity: 8, color: "Black" }
-        ];
+    const [selectedPhone, setSelectedPhone] = useState(null);
+    const [mobilePhones, setMobilePhones] = useState([]);
+
+    useEffect(() => {
+        const storedPhones = localStorage.getItem('mobilePhones');
+        setMobilePhones(storedPhones ? JSON.parse(storedPhones) : []);
+    }, [selectedPhone]);
+
+
+    function handleUpdate(phone) {
+        setSelectedPhone(phone);
     }
+    function handleDelete(id) {
+        deletePhone(id);
+        setSelectedPhone(null);
+    }
+
+    function deletePhone(id) {
+        const updatedMobilePhones = mobilePhones.filter(phone => phone.id !== id);
+        localStorage.setItem('mobilePhones', JSON.stringify(updatedMobilePhones));
+        setMobilePhones(updatedMobilePhones);
+    }
+
     return (
         <div>
+            {selectedPhone && (<InputForm selectedPhone={selectedPhone} isUpdating="true" />)}
             <h2 className="phoneTableTitle">Phones</h2>
             <table id="mobilePhoneTable">
                 <tbody>
@@ -39,6 +56,8 @@ function DisplayTable() {
                                 storageCapacity={phone.storageCapacity}
                                 ramCapacity={phone.ramCapacity}
                                 color={phone.color}
+                                handleUpdate={() => handleUpdate(phone)}
+                                handleDelete={() => handleDelete(phone.id)}
                             />
                         ))}
                 </tbody>

@@ -1,17 +1,23 @@
 import InputFormRow from "./InputFormRow";
 import Button from "./Button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-function InputForm({ isUpdating = false }) {
-  const handleSubmit = isUpdating ? updateMobilePhone : addMobilePhone;
+function InputForm({ selectedPhone }) {
+  const handleSubmit = selectedPhone ? updateMobilePhone : addMobilePhone;
   const [phone, setPhone] = useState({ brand: '', model: '', operatingSystem: '', storageCapacity: '', ramCapacity: '', color: '' });
   function handleChange(event) {
     setPhone({ ...phone, [event.target.name]: event.target.value });
   }
 
-  function addMobilePhone() {
   
-    const mobilePhones = getMobilePhones();
+  useEffect(() => {
+    if (selectedPhone) {
+      setPhone({ brand: selectedPhone.brand, model: selectedPhone.model, operatingSystem: selectedPhone.operatingSystem, storageCapacity: selectedPhone.storageCapacity, ramCapacity: selectedPhone.ramCapacity, color: selectedPhone.color });
+    }
+  }, [selectedPhone]);
+
+  const mobilePhones = getMobilePhones();
+  function addMobilePhone() {
     const id = generateId();
     if (id !== '' && !isIdTaken(id)) {
       const mobilePhone = {
@@ -28,34 +34,50 @@ function InputForm({ isUpdating = false }) {
     }
   }
 
+  function updateMobilePhone() {
+    const phoneIndex = mobilePhones.findIndex(phone => phone.id === selectedPhone.id);
+    mobilePhones[phoneIndex] = {
+      id: selectedPhone.id,
+      brand: phone.brand,
+      model: phone.model,
+      operatingSystem: phone.operatingSystem,
+      storageCapacity: phone.storageCapacity,
+      ramCapacity: phone.ramCapacity,
+      color: phone.color
+    };
+    window.localStorage.setItem('mobilePhones', JSON.stringify(mobilePhones));
+  }
+
+
+
   return (
     <div className="container">
-      <h3>{isUpdating ? "Update phone" : "Add a new phone"}</h3>
-      <form id={isUpdating ? "updateMobilePhoneForm" : "addMobilePhoneForm"}>
+      <h3>{selectedPhone ? "Update phone" : "Add a new phone"}</h3>
+      <form id={selectedPhone ? "updateMobilePhoneForm" : "addMobilePhoneForm"}>
         <table>
           <tbody>
             <tr>
               <InputFormRow label="Brand:" name="brand" type="text" value={phone.brand} handleChange={handleChange} />
             </tr>
             <tr>
-              <InputFormRow label="Model:" name="model" type="text" value={phone.model} handleChange={handleChange}/>
+              <InputFormRow label="Model:" name="model" type="text" value={phone.model} handleChange={handleChange} />
             </tr>
             <tr>
-              <InputFormRow label="Operating System:" name="operatingSystem" type="text" value={phone.operatingSystem} handleChange={handleChange}/>
+              <InputFormRow label="Operating System:" name="operatingSystem" type="text" value={phone.operatingSystem} handleChange={handleChange} />
             </tr>
             <tr>
-              <InputFormRow label="Storage Capacity (GB):" name="storageCapacity" type="number" value={phone.storageCapacity} handleChange={handleChange}/>
+              <InputFormRow label="Storage Capacity (GB):" name="storageCapacity" type="number" value={phone.storageCapacity} handleChange={handleChange} />
             </tr>
             <tr>
-              <InputFormRow label="RAM Capacity (GB):" name="ramCapacity" type="number" value={phone.ramCapacity} handleChange={handleChange}/>
+              <InputFormRow label="RAM Capacity (GB):" name="ramCapacity" type="number" value={phone.ramCapacity} handleChange={handleChange} />
             </tr>
             <tr>
-              <InputFormRow label="Color:" name="color" type="text" value={phone.color} handleChange={handleChange}/>
+              <InputFormRow label="Color:" name="color" type="text" value={phone.color} handleChange={handleChange} />
             </tr>
             <tr>
               <td />
               <td>
-                <Button type="submit" value={isUpdating ? "Update phone" : "Add phone"} onClick={handleSubmit} />
+                <Button type="submit" value={selectedPhone ? "Update phone" : "Add phone"} onClick={handleSubmit} />
               </td>
             </tr>
           </tbody>
@@ -65,29 +87,6 @@ function InputForm({ isUpdating = false }) {
   );
 }
 
-function updateMobilePhone() {
-  const form = document.getElementById('updateMobilePhoneForm');
-  const id = form.id.value;
-  const brand = form.brand.value;
-  const model = form.model.value;
-  const operatingSystem = form.operatingSystem.value;
-  const storageCapacity = form.storageCapacity.value;
-  const ramCapacity = form.ramCapacity.value;
-  const color = form.color.value;
-
-  const mobilePhones = getMobilePhones();
-  const phoneIndex = mobilePhones.findIndex(phone => phone.id === id);
-  mobilePhones[phoneIndex] = {
-    id,
-    brand,
-    model,
-    operatingSystem,
-    storageCapacity,
-    ramCapacity,
-    color
-  };
-  window.localStorage.setItem('mobilePhones', JSON.stringify(mobilePhones));
-}
 
 export default InputForm;
 
