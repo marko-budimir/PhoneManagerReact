@@ -40,7 +40,6 @@ class DisplayTable extends React.Component {
         }
         try {
             const response = await axios.get(`https://localhost:44359/api/mobilephone?pageNumber=${page}&pageSize=${pageSize}${filterQueryString}${sortQueryString}`);
-            console.log('response:', response.data);
             this.setState({ mobilePhones: response.data.items, totalPages: response.data.totalPages});
         }
         catch (error) {
@@ -86,7 +85,6 @@ class DisplayTable extends React.Component {
 
     handlePageSizeChange(event) {
         const newPageSize = parseInt(event.target.value, 10);
-        console.log('newPageSize:', newPageSize);
         this.setState({ selectedPageSize: newPageSize, currentPage: 1 }, () => {
             this.getMobilePhones(this.state.currentPage, this.state.selectedPageSize);
         });
@@ -95,7 +93,6 @@ class DisplayTable extends React.Component {
     handleFilterChange(event) {
         const { filter } = this.state;
         const newFilter = { ...filter, [event.target.name]: event.target.value };
-        console.log('newFilter:', newFilter);
         this.setState({ filter: newFilter }, () => {
             this.getMobilePhones(this.state.currentPage, this.state.selectedPageSize);
         });
