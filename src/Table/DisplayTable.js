@@ -1,6 +1,7 @@
 import Phone from './Phone';
 import React from 'react';
 import InputForm from '../Form/InputForm';
+import axios from 'axios';
 
 class DisplayTable extends React.Component {
     constructor(props) {
@@ -11,37 +12,45 @@ class DisplayTable extends React.Component {
         };
     }
 
-    componentDidMount() {
-        const storedPhones = localStorage.getItem('mobilePhones');
-        this.setState({ mobilePhones: storedPhones ? JSON.parse(storedPhones) : [] });
+    async componentDidMount() {
+        await this.getMobilePhones();
     }
 
+    async getMobilePhones() {
+        try {
+            const response = await axios.get('https://localhost:44359/api/mobilephone?pageSize=100');
+            this.setState({ mobilePhones: response.data });
+        }
+        catch (error) {
+            console.error('Error fetching mobile phones:', error);
+        }
+    }
 
-    handleUpdate(phone) {
+    async handleUpdate(phone) {
         this.setState({ selectedPhone: phone });
     }
 
-    handleDelete(id) {
-        this.deletePhone(id);
-        this.setState({ mobilePhones: null });
+    async handleDelete(id) {
+        try {
+            await axios.delete('https://localhost:44359/api/mobilephone/' + id);
+            await this.getMobilePhones();
+            this.setState({ selectedPhone: null });
+        } 
+        catch (error) {
+            console.error('Error deleting mobile phone:', error);
+        }
     }
 
-    deletePhone(id) {
-        const { mobilePhones } = this.state;
-        const updatedMobilePhones = mobilePhones.filter(phone => phone.id !== id);
-        localStorage.setItem('mobilePhones', JSON.stringify(updatedMobilePhones));
-        this.setState({ mobilePhones: updatedMobilePhones });
-    }
-
-    handleAddOrUpdate(updatedMobilePhones) {
-        this.setState({ mobilePhones: updatedMobilePhones, selectedPhone: null });
+    async handleAddOrUpdate() {
+        await this.getMobilePhones();
+        this.setState({ selectedPhone: null });
     }
     render() {
         const { selectedPhone, mobilePhones } = this.state;
         return (
             <div>
-                <InputForm onAddOrUpdate={this.handleAddOrUpdate} />
-                {selectedPhone && (<InputForm selectedPhone={selectedPhone} isUpdating="true" onAddOrUpdate={this.handleAddOrUpdate} />)}
+                <InputForm onAddOrUpdate={() => this.handleAddOrUpdate()} />
+                {selectedPhone && (<InputForm selectedPhone={selectedPhone} isUpdating="true" onAddOrUpdate={() => this.handleAddOrUpdate()} />)}
                 <h2 className="phoneTableTitle">Phones</h2>
                 <table id="mobilePhoneTable">
                     <tbody>
@@ -66,8 +75,8 @@ class DisplayTable extends React.Component {
                                     brand={phone.brand}
                                     model={phone.model}
                                     operatingSystem={phone.operatingSystem}
-                                    storageCapacity={phone.storageCapacity}
-                                    ramCapacity={phone.ramCapacity}
+                                    storageCapacity={phone.storageCapacityGB}
+                                    ramCapacity={phone.ramGB}
                                     color={phone.color}
                                     handleUpdate={() => this.handleUpdate(phone)}
                                     handleDelete={() => this.handleDelete(phone.id)}

@@ -1,10 +1,11 @@
 import InputFormRow from "./InputFormRow";
 import Button from "./Button";
 import { useState, useEffect } from "react";
+import axios from "axios";
 
 function InputForm({ selectedPhone, onAddOrUpdate }) {
   const handleSubmit = selectedPhone ? updateMobilePhone : addMobilePhone;
-  const [phone, setPhone] = useState({ brand: '', model: '', operatingSystem: '', storageCapacity: '', ramCapacity: '', color: '' });
+  const [phone, setPhone] = useState({ brand: '', model: '', operatingSystem: '', storageCapacityGB: '', ramGB: '', color: '' });
 
   function handleChange(event) {
     setPhone({ ...phone, [event.target.name]: event.target.value });
@@ -13,45 +14,36 @@ function InputForm({ selectedPhone, onAddOrUpdate }) {
 
   useEffect(() => {
     if (selectedPhone) {
-      setPhone({ brand: selectedPhone.brand, model: selectedPhone.model, operatingSystem: selectedPhone.operatingSystem, storageCapacity: selectedPhone.storageCapacity, ramCapacity: selectedPhone.ramCapacity, color: selectedPhone.color });
+      setPhone({ brand: selectedPhone.brand, model: selectedPhone.model, operatingSystem: selectedPhone.operatingSystem, storageCapacityGB: selectedPhone.storageCapacityGB, ramGB: selectedPhone.ramGB, color: selectedPhone.color });
     }
   }, [selectedPhone]);
 
-  const mobilePhones = getMobilePhones();
 
   function addMobilePhone() {
-    const id = generateId();
-    if (id !== '' && !isIdTaken(id)) {
+    try {
       if (validateForm()) {
-        const mobilePhone = {
-          id: id,
-          brand: phone.brand,
-          model: phone.model,
-          operatingSystem: phone.operatingSystem,
-          storageCapacity: phone.storageCapacity,
-          ramCapacity: phone.ramCapacity,
-          color: phone.color,
-        };
-        const updatedMobilePhones = [...mobilePhones, mobilePhone];
-        window.localStorage.setItem('mobilePhones', JSON.stringify(updatedMobilePhones));
-        onAddOrUpdate(updatedMobilePhones);
+        axios.post('https://localhost:44359/api/mobilephone', phone).then(response => {
+          setPhone({ brand: '', model: '', operatingSystem: '', storageCapacityGB: '', ramGB: '', color: '' });
+          onAddOrUpdate();
+        });
       }
+    }
+    catch (error) {
+      console.error('Error adding mobile phone:', error);
     }
   }
 
   function updateMobilePhone() {
-    const phoneIndex = mobilePhones.findIndex(phone => phone.id === selectedPhone.id);
-    mobilePhones[phoneIndex] = {
-      id: selectedPhone.id,
-      brand: phone.brand,
-      model: phone.model,
-      operatingSystem: phone.operatingSystem,
-      storageCapacity: phone.storageCapacity,
-      ramCapacity: phone.ramCapacity,
-      color: phone.color
-    };
-    window.localStorage.setItem('mobilePhones', JSON.stringify(mobilePhones));
-    onAddOrUpdate(mobilePhones);
+    try {
+      if (validateForm()) {
+        axios.put('https://localhost:44359/api/mobilephone/' + selectedPhone.id, phone).then(response => {
+          onAddOrUpdate();
+        });
+      }
+    }
+    catch (error) {
+      console.error('Error updating mobile phone:', error);
+    }
   }
 
   function validateForm() {
@@ -59,7 +51,7 @@ function InputForm({ selectedPhone, onAddOrUpdate }) {
     if (!phone.brand.trim()) {
       alert('Brand is required');
       isValid = false;
-    } 
+    }
     else if (!phone.model.trim()) {
       alert('Model is required');
       isValid = false;
@@ -68,11 +60,11 @@ function InputForm({ selectedPhone, onAddOrUpdate }) {
       alert('Operating system is required');
       isValid = false;
     }
-    else if (parseInt(phone.storageCapacity, 10) <= 0 || isNaN(parseInt(phone.storageCapacity, 10))) {
+    else if (parseInt(phone.storageCapacityGB, 10) <= 0 || isNaN(parseInt(phone.storageCapacityGB, 10))) {
       alert('Storage capacity must be greater than 0');
       isValid = false;
     }
-    else if (parseInt(phone.ramCapacity, 10) <= 0 || isNaN(parseInt(phone.ramCapacity, 10))) {
+    else if (parseInt(phone.ramGB, 10) <= 0 || isNaN(parseInt(phone.ramGB, 10))) {
       alert('RAM capacity must be greater than 0');
       isValid = false;
     }
@@ -100,10 +92,10 @@ function InputForm({ selectedPhone, onAddOrUpdate }) {
               <InputFormRow label="Operating System:" name="operatingSystem" type="text" value={phone.operatingSystem} handleChange={handleChange} />
             </tr>
             <tr>
-              <InputFormRow label="Storage Capacity (GB):" name="storageCapacity" type="number" value={phone.storageCapacity} handleChange={handleChange} />
+              <InputFormRow label="Storage Capacity (GB):" name="storageCapacityGB" type="number" value={phone.storageCapacityGB} handleChange={handleChange} />
             </tr>
             <tr>
-              <InputFormRow label="RAM Capacity (GB):" name="ramCapacity" type="number" value={phone.ramCapacity} handleChange={handleChange} />
+              <InputFormRow label="RAM Capacity (GB):" name="ramGB" type="number" value={phone.ramGB} handleChange={handleChange} />
             </tr>
             <tr>
               <InputFormRow label="Color:" name="color" type="text" value={phone.color} handleChange={handleChange} />
@@ -121,23 +113,4 @@ function InputForm({ selectedPhone, onAddOrUpdate }) {
   );
 }
 
-
 export default InputForm;
-
-
-function generateId() {
-  const mobilePhones = getMobilePhones();
-  mobilePhones.sort((a, b) => a.id - b.id);
-  const lastId = mobilePhones.length > 0 ? mobilePhones[mobilePhones.length - 1].id : 0;
-  return parseInt(lastId) + 1;
-}
-
-function getMobilePhones() {
-  const mobilePhones = localStorage.getItem('mobilePhones');
-  return mobilePhones ? JSON.parse(mobilePhones) : [];
-}
-
-function isIdTaken(id) {
-  const mobilePhones = getMobilePhones();
-  return mobilePhones.some(phone => phone.id === id);
-}
