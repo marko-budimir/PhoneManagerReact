@@ -112,3 +112,40 @@ h3 {
   margin-top: 5px;
 }
 
+#filterTable {
+  width: 50%;
+  margin: auto;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  border-collapse: collapse;
+}
+
+#mobilePhoneTable th {
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+}
+
+#mobilePhoneTable th:hover {
+  background-color: #f0f0f0;
+}
+
+#mobilePhoneTable th:active {
+  background-color: #d4d4d4;
+}
+
+#mobilePhoneTable th::after {
+  font-size: 12px;
+  position: absolute;
+  top: 8px;
+  right: 4px;
+  opacity: 0.5;
+}
+
+#mobilePhoneTable th.true::after {
+  content: '\25B2';
+}
+
+#mobilePhoneTable th.false::after {
+  content: '\25BC';
+}
