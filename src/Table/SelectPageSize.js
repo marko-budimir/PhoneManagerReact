@@ -1,6 +1,6 @@
 function SelectPageSize({ handleChange, selectedPageSize, pageSizeOptions }) {
     return (
-        <div>
+        <div className="selectPageSize">
             <label htmlFor="pageSize">Page Size:</label>
             <select id="pageSize" onChange={handleChange} value={selectedPageSize}>
                 {pageSizeOptions.map(option => (

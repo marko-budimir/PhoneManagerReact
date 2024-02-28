@@ -149,3 +149,64 @@ h3 {
 #mobilePhoneTable th.false::after {
   content: '\25BC';
 }
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.pagination button {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  color: #333;
+  cursor: pointer;
+  padding: 8px 12px;
+  margin: 0 2px;
+  transition: background-color 0.3s;
+}
+
+.pagination button:hover {
+  background-color: #f0f0f0;
+}
+
+.pagination button.active {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.selectPageSize {
+  margin-top: 10px;
+}
+
+.selectPageSize label {
+  margin-right: 10px;
+}
+
+.selectPageSize select {
+  padding: 8px;
+  font-size: 14px;
+  border: 1px solid #ddd;
+  background-color: #fff;
+  cursor: pointer;
+  transition: border-color 0.3s;
+}
+
+.selectPageSize select:hover {
+  border-color: #007bff;
+}
+
+.selectPageSize select option {
+  background-color: #fff;
+  color: #333;
+}
+
+.selectPageSize select option:hover {
+  background-color: #f0f0f0;
+}
+
+.selectPageSize select option:checked {
+  background-color: #007bff;
+  color: #fff;
+}

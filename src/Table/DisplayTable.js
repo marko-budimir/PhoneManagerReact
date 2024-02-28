@@ -13,8 +13,9 @@ class DisplayTable extends React.Component {
             selectedPhone: null,
             mobilePhones: [],
             currentPage: 1,
-            pageSizeOptions: [10, 20, 50],
+            pageSizeOptions: [2, 10, 20, 50],
             selectedPageSize: 10,
+            totalPages: 1,
             filter: {
                 searchQuery: '',
                 minStorageCapacityGB: '',
@@ -40,7 +41,7 @@ class DisplayTable extends React.Component {
         try {
             const response = await axios.get(`https://localhost:44359/api/mobilephone?pageNumber=${page}&pageSize=${pageSize}${filterQueryString}${sortQueryString}`);
             console.log('response:', response.data);
-            this.setState({ mobilePhones: response.data });
+            this.setState({ mobilePhones: response.data.items, totalPages: response.data.totalPages});
         }
         catch (error) {
             console.error('Error fetching mobile phones:', error);
@@ -69,8 +70,13 @@ class DisplayTable extends React.Component {
 
     async handlePageChange(direction) {
         const { currentPage, selectedPageSize } = this.state;
-        const newPage = direction === 'next' ? currentPage + 1 : currentPage - 1;
-        console.log('newPage:', newPage);
+        let newPage;
+        if (Number.isInteger(direction)) {
+            newPage = direction;
+        }
+        else {
+            newPage = direction === 'next' ? currentPage + 1 : currentPage - 1;
+        }
 
         if (newPage >= 1) {
             await this.getMobilePhones(newPage, selectedPageSize);
@@ -120,7 +126,7 @@ class DisplayTable extends React.Component {
     }
 
     render() {
-        const { selectedPhone, mobilePhones, currentPage, pageSizeOptions, selectedPageSize, filter, sortBy, isAscending } = this.state;
+        const { selectedPhone, mobilePhones, currentPage, pageSizeOptions, selectedPageSize, filter, sortBy, isAscending, totalPages } = this.state;
         return (
             <div>
                 <InputForm onAddOrUpdate={() => this.handleAddOrUpdate()} />
@@ -160,8 +166,10 @@ class DisplayTable extends React.Component {
                 />
                 <SelectPage
                     currentPage={currentPage}
+                    totalPages={totalPages}
                     handleNext={() => this.handlePageChange('next')}
                     handlePrev={() => this.handlePageChange('prev')}
+                    handlePageClick={(page) => this.handlePageChange(page)}
                 />
             </div>
         )
