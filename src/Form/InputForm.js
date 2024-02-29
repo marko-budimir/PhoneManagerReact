@@ -1,11 +1,24 @@
 import InputFormRow from "./InputFormRow";
 import Button from "./Button";
 import { useState, useEffect } from "react";
-import { addMobilePhone, updateMobilePhone } from "../services/PhoneService";
+import { addMobilePhone, updateMobilePhone, getMobilePhone } from "../services/PhoneService";
+import { useNavigate, useParams } from "react-router-dom";
 
-function InputForm({ selectedPhone, onAddOrUpdate }) {
-  const handleSubmit = selectedPhone ? handleUpdatePhone : handleAddPhone;
+function InputForm() {
+  const { id } = useParams();
+  const handleSubmit = id ? handleUpdatePhone : handleAddPhone;
   const [phone, setPhone] = useState({ brand: '', model: '', operatingSystem: '', storageCapacityGB: '', ramGB: '', color: '' });
+  const navigate = useNavigate();
+
+  
+  const [selectedPhone, setSelectedPhone] = useState(null);
+  useEffect(() => {
+    if (id) {
+      getMobilePhone(id).then(response => {
+        setSelectedPhone(response);
+      });
+    }
+  }, []);
 
   function handleChange(event) {
     setPhone({ ...phone, [event.target.name]: event.target.value });
@@ -24,7 +37,7 @@ function InputForm({ selectedPhone, onAddOrUpdate }) {
       if (validateForm()) {
         addMobilePhone(phone).then(response => {
           setPhone({ brand: '', model: '', operatingSystem: '', storageCapacityGB: '', ramGB: '', color: '' });
-          onAddOrUpdate();
+          navigate('/');
           if (response !== 201) {
             alert('Error adding phone');
           }
@@ -40,7 +53,7 @@ function InputForm({ selectedPhone, onAddOrUpdate }) {
     try {
       if (validateForm()) {
         updateMobilePhone(selectedPhone.id, phone).then(response => {
-          onAddOrUpdate();
+          navigate('/');
           if (response !== 200) {
             alert('Error updating phone');
           }

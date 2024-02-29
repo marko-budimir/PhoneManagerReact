@@ -6,6 +6,7 @@ import SelectPage from './SelectPage';
 import InputFilter from './InputFilter';
 import { getMobilePhones, deleteMobilePhone } from '../services/PhoneService.js';
 
+
 class DisplayTable extends React.Component {
     constructor(props) {
         super(props);
@@ -34,7 +35,8 @@ class DisplayTable extends React.Component {
     }
 
     componentDidUpdate() {
-        this.getMobilePhones();
+        if (this.state.selectedPhone)
+            this.getMobilePhones();
     }
 
     getMobilePhones() {
@@ -56,8 +58,8 @@ class DisplayTable extends React.Component {
         this.setState({ mobilePhones, totalPages });
     }
 
-    handleUpdate(phone) {
-        this.setState({ selectedPhone: phone });
+    handleUpdate(id) {
+        this.state.navigate(`/edit/${id}`);
     }
 
     handleDelete(id) {
@@ -135,7 +137,6 @@ class DisplayTable extends React.Component {
         const { selectedPhone, mobilePhones, currentPage, pageSizeOptions, selectedPageSize, filter, sortBy, isAscending, totalPages } = this.state;
         return (
             <div>
-                <InputForm onAddOrUpdate={() => this.handleAddOrUpdate()} />
                 {selectedPhone && (<InputForm selectedPhone={selectedPhone} isUpdating="true" onAddOrUpdate={() => this.handleAddOrUpdate()} />)}
                 <h2 className="phoneTableTitle">Phones</h2>
                 <InputFilter filter={filter} handleFilterChange={(event) => this.handleFilterChange(event)} />
@@ -159,7 +160,7 @@ class DisplayTable extends React.Component {
                                     storageCapacity={phone.storageCapacityGB}
                                     ramCapacity={phone.ramGB}
                                     color={phone.color}
-                                    handleUpdate={() => this.handleUpdate(phone)}
+                                    id = {phone.id}
                                     handleDelete={() => this.handleDelete(phone.id)}
                                 />
                             ))}

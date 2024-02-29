@@ -22,7 +22,7 @@ function InputFilter({ searchQuery, minStorageCapacityGB, maxStorageCapacityGB, 
                     <th>Min ram (GB)</th>
                     <th>Max ram (GB)</th>
                 </tr>
-                <tr>
+                <tr> 
                     <td><input type="text" id="search" name="searchQuery" onChange={handleFilterChange} value={searchQuery} /></td>
                     <td><input type="number" id="minStorage" name="minStorageCapacityGB" onChange={handleFilterChange} value={minStorageCapacityGB} /></td>
                     <td><input type="number" id="maxStorage" name="maxStorageCapacityGB" onChange={handleFilterChange} value={maxStorageCapacityGB} /></td>

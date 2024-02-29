@@ -40,3 +40,15 @@ export async function updateMobilePhone(id, phone) {
         throw error;
     }
 }
+
+export async function getMobilePhone(id) {
+    try {
+        const response = await axios.get(`${BASE_URL}/${id}`);
+        if (response.status === 200) {
+            return response.data;
+        }
+        return null;
+    } catch (error) {
+        throw error;
+    }
+}

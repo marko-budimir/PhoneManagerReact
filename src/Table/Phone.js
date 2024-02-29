@@ -1,6 +1,7 @@
 import Button from "../Form/Button";
+import { Link } from "react-router-dom";
 
-function Phone({ brand, model, operatingSystem, storageCapacity, ramCapacity, color, handleUpdate, handleDelete }) {
+function Phone({ brand, model, operatingSystem, storageCapacity, ramCapacity, color, id, handleDelete }) {
 
     return (
         <tr>
@@ -10,7 +11,11 @@ function Phone({ brand, model, operatingSystem, storageCapacity, ramCapacity, co
             <td>{storageCapacity}</td>
             <td>{ramCapacity}</td>
             <td>{color}</td>
-            <td className="tableButtons"><Button type="button" value="Update" onClick={handleUpdate} /></td>
+            <td className="tableButtons">
+                <Link to={`/edit/${id}`}>
+                    <Button type="button" value="Update" />
+                </Link>
+            </td>
             <td className="tableButtons"><Button type="button" value="Delete" onClick={handleDelete} /></td>
         </tr>
     )
