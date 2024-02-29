@@ -1,10 +1,10 @@
 import Phone from './Phone';
 import React from 'react';
 import InputForm from '../Form/InputForm';
-import axios from 'axios';
 import SelectPageSize from './SelectPageSize';
 import SelectPage from './SelectPage';
 import InputFilter from './InputFilter';
+import {getMobilePhones, deleteMobilePhone} from '../services/PhoneService.js';
 
 class DisplayTable extends React.Component {
     constructor(props) {
@@ -28,47 +28,60 @@ class DisplayTable extends React.Component {
         };
     }
 
-    async componentDidMount() {
-        await this.getMobilePhones(this.state.currentPage, this.state.selectedPageSize);
+    componentDidMount() {
+        this.getMobilePhones();
     }
 
-    async getMobilePhones(page = 1, pageSize = 10) {
-        const filterQueryString = this.buildFilterQueryString();
-        let sortQueryString = '';
-        if(this.state.sortBy) {
-            sortQueryString = `&sortBy=${this.state.sortBy}&isAscending=${this.state.isAscending}`;
-        }
+    componentDidUpdate() {
+        this.getMobilePhones();
+    }
+
+    getMobilePhones() {
+        const queryString = this.buildQueryString();
+        
         try {
-            const response = await axios.get(`https://localhost:44359/api/mobilephone?pageNumber=${page}&pageSize=${pageSize}${filterQueryString}${sortQueryString}`);
-            this.setState({ mobilePhones: response.data.items, totalPages: response.data.totalPages});
+            getMobilePhones(queryString).then((response) => {
+                if(response) {
+                    this.handleGetMobilePhones(response[0], response[1]);
+                }
+            });
         }
         catch (error) {
             console.error('Error fetching mobile phones:', error);
         }
     }
 
-    async handleUpdate(phone) {
+    handleGetMobilePhones(mobilePhones, totalPages) {
+        this.setState({ mobilePhones, totalPages });
+    }
+
+    handleUpdate(phone) {
         this.setState({ selectedPhone: phone });
     }
 
-    async handleDelete(id) {
+    handleDelete(id) {
         try {
-            await axios.delete('https://localhost:44359/api/mobilephone/' + id);
-            await this.getMobilePhones(this.state.currentPage, this.state.pageSize);
+            deleteMobilePhone(id).then((response) => {
             this.setState({ selectedPhone: null });
+            if(response === 504) {
+                console.error('Error deleting mobile phone:', response.data);
+            }
+            if(response === 404) {
+                console.error('Error deleting mobile phone:', response.data);
+            }
+            });
         }
         catch (error) {
             console.error('Error deleting mobile phone:', error);
         }
     }
 
-    async handleAddOrUpdate() {
-        await this.getMobilePhones(this.state.currentPage, this.state.pageSize);
+    handleAddOrUpdate() {
         this.setState({ selectedPhone: null });
     }
 
-    async handlePageChange(direction) {
-        const { currentPage, selectedPageSize } = this.state;
+    handlePageChange(direction) {
+        const { currentPage } = this.state;
         let newPage;
         if (Number.isInteger(direction)) {
             newPage = direction;
@@ -78,29 +91,28 @@ class DisplayTable extends React.Component {
         }
 
         if (newPage >= 1) {
-            await this.getMobilePhones(newPage, selectedPageSize);
             this.setState({ currentPage: newPage });
         }
     }
 
     handlePageSizeChange(event) {
         const newPageSize = parseInt(event.target.value, 10);
-        this.setState({ selectedPageSize: newPageSize, currentPage: 1 }, () => {
-            this.getMobilePhones(this.state.currentPage, this.state.selectedPageSize);
-        });
+        this.setState({ selectedPageSize: newPageSize, currentPage: 1 });
     }
 
     handleFilterChange(event) {
         const { filter } = this.state;
         const newFilter = { ...filter, [event.target.name]: event.target.value };
-        this.setState({ filter: newFilter }, () => {
-            this.getMobilePhones(this.state.currentPage, this.state.selectedPageSize);
-        });
+        this.setState({ filter: newFilter });
     }
 
-    buildFilterQueryString() {
+    buildQueryString() {
         const { filter } = this.state;
         let queryString = '';
+        queryString += `?pageNumber=${this.state.currentPage}&pageSize=${this.state.selectedPageSize}`;
+        if(this.state.sortBy) {
+            queryString += `&sortBy=${this.state.sortBy}&isAscending=${this.state.isAscending}`;
+        }
         for (const key in filter) {
             if (filter[key]) {
                 queryString += `&${key}=${filter[key]}`;
@@ -112,13 +124,9 @@ class DisplayTable extends React.Component {
     handleSort(sortColumn) {
         const { sortBy, isAscending } = this.state;
         if(sortColumn === sortBy) {
-            this.setState({ isAscending: !isAscending }, () => {
-                this.getMobilePhones(this.state.currentPage, this.state.selectedPageSize);
-            });
+            this.setState({ isAscending: !isAscending });
         } else {
-            this.setState({ sortBy: sortColumn, isAscending: true }, () => {
-                this.getMobilePhones(this.state.currentPage, this.state.selectedPageSize);
-            });
+            this.setState({ sortBy: sortColumn, isAscending: true });
         }
     }
 

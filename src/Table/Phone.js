@@ -1,17 +1,17 @@
 import Button from "../Form/Button";
 
-function Phone(params) {
+function Phone({brand, model, operatingSystem, storageCapacity, ramCapacity, color, handleUpdate, handleDelete}) {
     
     return (
         <tr>
-            <td>{params.brand}</td>
-            <td>{params.model}</td>
-            <td>{params.operatingSystem}</td>
-            <td>{params.storageCapacity}</td>
-            <td>{params.ramCapacity}</td>
-            <td>{params.color}</td>
-            <td className="tableButtons"><Button type="button" value="Update" onClick={params.handleUpdate} /></td>
-            <td className="tableButtons"><Button type="button" value="Delete" onClick={params.handleDelete} /></td>
+            <td>{brand}</td>
+            <td>{model}</td>
+            <td>{operatingSystem}</td>
+            <td>{storageCapacity}</td>
+            <td>{ramCapacity}</td>
+            <td>{color}</td>
+            <td className="tableButtons"><Button type="button" value="Update" onClick={handleUpdate} /></td>
+            <td className="tableButtons"><Button type="button" value="Delete" onClick={handleDelete} /></td>
         </tr>
     )
 }

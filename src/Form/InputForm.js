@@ -1,10 +1,10 @@
 import InputFormRow from "./InputFormRow";
 import Button from "./Button";
 import { useState, useEffect } from "react";
-import axios from "axios";
+import { addMobilePhone, updateMobilePhone } from "../services/PhoneService";
 
 function InputForm({ selectedPhone, onAddOrUpdate }) {
-  const handleSubmit = selectedPhone ? updateMobilePhone : addMobilePhone;
+  const handleSubmit = selectedPhone ? handleUpdatePhone : handleAddPhone;
   const [phone, setPhone] = useState({ brand: '', model: '', operatingSystem: '', storageCapacityGB: '', ramGB: '', color: '' });
 
   function handleChange(event) {
@@ -19,12 +19,15 @@ function InputForm({ selectedPhone, onAddOrUpdate }) {
   }, [selectedPhone]);
 
 
-  function addMobilePhone() {
+  function handleAddPhone() {
     try {
       if (validateForm()) {
-        axios.post('https://localhost:44359/api/mobilephone', phone).then(response => {
+        addMobilePhone(phone).then(response => {
           setPhone({ brand: '', model: '', operatingSystem: '', storageCapacityGB: '', ramGB: '', color: '' });
           onAddOrUpdate();
+          if (response !== 201) {
+            alert('Error adding phone');
+          }
         });
       }
     }
@@ -33,11 +36,14 @@ function InputForm({ selectedPhone, onAddOrUpdate }) {
     }
   }
 
-  function updateMobilePhone() {
+  function handleUpdatePhone() {
     try {
       if (validateForm()) {
-        axios.put('https://localhost:44359/api/mobilephone/' + selectedPhone.id, phone).then(response => {
+        updateMobilePhone(selectedPhone.id, phone).then(response => {
           onAddOrUpdate();
+          if (response !== 200) {
+            alert('Error updating phone');
+          }
         });
       }
     }
