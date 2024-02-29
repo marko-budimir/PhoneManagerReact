@@ -5,7 +5,7 @@ const BASE_URL = 'https://localhost:44359/api/mobilephone';
 export async function getMobilePhones(query) {
     try {
         const response = await axios.get(`${BASE_URL}${query}`);
-        if(response.status === 200){
+        if (response.status === 200) {
             return [response.data.items, response.data.totalPages];
         }
         return null;

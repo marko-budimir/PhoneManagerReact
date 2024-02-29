@@ -4,7 +4,7 @@ import InputForm from '../Form/InputForm';
 import SelectPageSize from './SelectPageSize';
 import SelectPage from './SelectPage';
 import InputFilter from './InputFilter';
-import {getMobilePhones, deleteMobilePhone} from '../services/PhoneService.js';
+import { getMobilePhones, deleteMobilePhone } from '../services/PhoneService.js';
 
 class DisplayTable extends React.Component {
     constructor(props) {
@@ -21,9 +21,10 @@ class DisplayTable extends React.Component {
                 minStorageCapacityGB: '',
                 maxStorageCapacityGB: '',
                 minRamGB: '',
-                maxRamGB: ''
+                maxRamGB: '',
+                shopId: ''
             },
-            sortBy:'Brand',
+            sortBy: 'Brand',
             isAscending: true
         };
     }
@@ -38,10 +39,10 @@ class DisplayTable extends React.Component {
 
     getMobilePhones() {
         const queryString = this.buildQueryString();
-        
+
         try {
             getMobilePhones(queryString).then((response) => {
-                if(response) {
+                if (response) {
                     this.handleGetMobilePhones(response[0], response[1]);
                 }
             });
@@ -62,13 +63,13 @@ class DisplayTable extends React.Component {
     handleDelete(id) {
         try {
             deleteMobilePhone(id).then((response) => {
-            this.setState({ selectedPhone: null });
-            if(response === 504) {
-                console.error('Error deleting mobile phone:', response.data);
-            }
-            if(response === 404) {
-                console.error('Error deleting mobile phone:', response.data);
-            }
+                this.setState({ selectedPhone: null });
+                if (response === 504) {
+                    console.error('Error deleting mobile phone:', response.data);
+                }
+                if (response === 404) {
+                    console.error('Error deleting mobile phone:', response.data);
+                }
             });
         }
         catch (error) {
@@ -110,7 +111,7 @@ class DisplayTable extends React.Component {
         const { filter } = this.state;
         let queryString = '';
         queryString += `?pageNumber=${this.state.currentPage}&pageSize=${this.state.selectedPageSize}`;
-        if(this.state.sortBy) {
+        if (this.state.sortBy) {
             queryString += `&sortBy=${this.state.sortBy}&isAscending=${this.state.isAscending}`;
         }
         for (const key in filter) {
@@ -123,7 +124,7 @@ class DisplayTable extends React.Component {
 
     handleSort(sortColumn) {
         const { sortBy, isAscending } = this.state;
-        if(sortColumn === sortBy) {
+        if (sortColumn === sortBy) {
             this.setState({ isAscending: !isAscending });
         } else {
             this.setState({ sortBy: sortColumn, isAscending: true });

@@ -1,4 +1,4 @@
-function SelectPage({ currentPage, totalPages, handleNext, handlePrev, handlePageClick}) {
+function SelectPage({ currentPage, totalPages, handleNext, handlePrev, handlePageClick }) {
     const renderPageButtons = () => {
         const pageButtons = [];
         for (let page = 1; page <= totalPages; page++) {

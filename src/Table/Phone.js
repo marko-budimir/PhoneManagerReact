@@ -1,7 +1,7 @@
 import Button from "../Form/Button";
 
-function Phone({brand, model, operatingSystem, storageCapacity, ramCapacity, color, handleUpdate, handleDelete}) {
-    
+function Phone({ brand, model, operatingSystem, storageCapacity, ramCapacity, color, handleUpdate, handleDelete }) {
+
     return (
         <tr>
             <td>{brand}</td>
