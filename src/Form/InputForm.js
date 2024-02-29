@@ -102,10 +102,10 @@ function InputForm() {
         <table>
           <tbody>
             <tr>
-              <InputFormRow label="Brand:" name="brand" type="text" value={phone.brand} handleChange={handleChange} />
+              <InputFormRow label="Brand:" name="brand" type="text" value={phone.brand} handleChange={handleChange} isDisabled={selectedPhone ? true : false} />
             </tr>
             <tr>
-              <InputFormRow label="Model:" name="model" type="text" value={phone.model} handleChange={handleChange} />
+              <InputFormRow label="Model:" name="model" type="text" value={phone.model} handleChange={handleChange} isDisabled={selectedPhone ? true : false} />
             </tr>
             <tr>
               <InputFormRow label="Operating System:" name="operatingSystem" type="text" value={phone.operatingSystem} handleChange={handleChange} />

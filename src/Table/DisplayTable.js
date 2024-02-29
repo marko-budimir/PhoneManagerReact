@@ -11,7 +11,7 @@ class DisplayTable extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            selectedPhone: null,
+            isDelete: false,
             mobilePhones: [],
             currentPage: 1,
             pageSizeOptions: [2, 10, 20, 50],
@@ -35,8 +35,11 @@ class DisplayTable extends React.Component {
     }
 
     componentDidUpdate() {
-        if (this.state.selectedPhone)
+        if (this.state.isDelete){
             this.getMobilePhones();
+            this.setState({isDelete: false});
+        }
+        
     }
 
     getMobilePhones() {
@@ -58,14 +61,10 @@ class DisplayTable extends React.Component {
         this.setState({ mobilePhones, totalPages });
     }
 
-    handleUpdate(id) {
-        this.state.navigate(`/edit/${id}`);
-    }
-
     handleDelete(id) {
         try {
             deleteMobilePhone(id).then((response) => {
-                this.setState({ selectedPhone: null });
+                this.setState({ isDelete: true });
                 if (response === 504) {
                     console.error('Error deleting mobile phone:', response.data);
                 }
@@ -77,10 +76,6 @@ class DisplayTable extends React.Component {
         catch (error) {
             console.error('Error deleting mobile phone:', error);
         }
-    }
-
-    handleAddOrUpdate() {
-        this.setState({ selectedPhone: null });
     }
 
     handlePageChange(direction) {
@@ -134,10 +129,9 @@ class DisplayTable extends React.Component {
     }
 
     render() {
-        const { selectedPhone, mobilePhones, currentPage, pageSizeOptions, selectedPageSize, filter, sortBy, isAscending, totalPages } = this.state;
+        const { mobilePhones, currentPage, pageSizeOptions, selectedPageSize, filter, sortBy, isAscending, totalPages } = this.state;
         return (
             <div>
-                {selectedPhone && (<InputForm selectedPhone={selectedPhone} isUpdating="true" onAddOrUpdate={() => this.handleAddOrUpdate()} />)}
                 <h2 className="phoneTableTitle">Phones</h2>
                 <InputFilter filter={filter} handleFilterChange={(event) => this.handleFilterChange(event)} />
                 <table id="mobilePhoneTable">

@@ -1,11 +1,11 @@
-function InputFormRow(props) {
+function InputFormRow({name, label, type, handleChange, value, isDisabled}) {
     return (
         <>
             <td>
-                <label htmlFor={props.name}>{props.label}</label>
+                <label htmlFor={name}>{label}</label>
             </td>
             <td>
-                <input type={props.type} id={props.name} name={props.name} onChange={props.handleChange} value={props.value}/>
+                <input type={type} id={name} name={name} onChange={handleChange} value={value} disabled={isDisabled}/>
             </td>
         </>
     );
